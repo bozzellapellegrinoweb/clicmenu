@@ -9,6 +9,7 @@ import {
 } from "lucide-react";
 import { ClicmenuLogo } from "@/components/ui/logo";
 import { Button } from "@/components/ui/button";
+import { MetaViewContent } from "@/components/meta-tracker";
 
 // ── Data ─────────────────────────────────────────────────────────────────────
 
@@ -89,6 +90,7 @@ function CountUp({ target, suffix = "" }: { target: number; suffix?: string }) {
 export function LandingAnimated() {
   return (
     <div className="min-h-screen bg-white overflow-x-hidden">
+      <MetaViewContent contentName="Landing Page Clicmenu.ai" />
 
       {/* ── Navbar ─────────────────────────────────────── */}
       <motion.nav

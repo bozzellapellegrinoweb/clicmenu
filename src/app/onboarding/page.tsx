@@ -9,6 +9,7 @@ import { Input } from "@/components/ui/input";
 import { Select } from "@/components/ui/select";
 import { useToast } from "@/components/ui/toast";
 import { slugify } from "@/lib/utils";
+import { trackCompleteRegistration, trackStartTrial } from "@/components/meta-tracker";
 import type { BusinessType } from "@/types";
 
 const BUSINESS_TYPE_OPTIONS = [
@@ -65,6 +66,10 @@ export default function OnboardingPage() {
       status: "trialing",
       expires_at: new Date(Date.now() + 14 * 24 * 60 * 60 * 1000).toISOString(),
     });
+
+    // Meta CAPI events
+    trackCompleteRegistration();
+    trackStartTrial();
 
     // Send welcome email + sync CRM (fire and forget)
     const trimmedName = name.trim();

@@ -2,6 +2,7 @@ import { NextRequest, NextResponse } from "next/server";
 import { getStripe } from "@/lib/stripe";
 import { getSupabaseAdmin } from "@/lib/supabase/admin";
 import { sendSubscriptionActiveEmail } from "@/lib/email";
+import { trackPurchase } from "@/lib/meta";
 import type Stripe from "stripe";
 
 export async function POST(request: NextRequest) {
@@ -35,12 +36,13 @@ export async function POST(request: NextRequest) {
         { onConflict: "user_id" }
       );
 
-      // Send subscription active email
+      // Send email + track Meta Purchase
       const { data: { user: authUser } } = await db.auth.admin.getUserById(userId);
       if (authUser?.email) {
         const { data: biz } = await db.from("businesses").select("name").eq("user_id", userId).single();
         const appUrl = process.env.NEXT_PUBLIC_APP_URL ?? "https://clicmenu.ai";
         sendSubscriptionActiveEmail(authUser.email, biz?.name ?? "Ciao", appUrl).catch(() => {});
+        trackPurchase({ email: authUser.email, url: `${appUrl}/dashboard/billing` }).catch(() => {});
       }
       break;
     }
