@@ -31,15 +31,15 @@ export default async function DashboardPage() {
     <div className="space-y-8">
 
       {/* ── Header ──────────────────────────────────────── */}
-      <div className="flex items-start justify-between">
+      <div className="flex flex-col sm:flex-row sm:items-start sm:justify-between gap-4">
         <div>
           <h1 className="text-2xl font-bold text-slate-900 tracking-tight">
             Ciao, {business?.name} 👋
           </h1>
           <p className="text-slate-400 mt-1 text-sm">Ecco una panoramica della tua attività</p>
         </div>
-        <Link href="/dashboard/menus/new">
-          <Button className="shadow-sm shadow-emerald-500/20">
+        <Link href="/dashboard/menus/new" className="sm:flex-shrink-0">
+          <Button className="shadow-sm shadow-emerald-500/20 w-full sm:w-auto">
             <Plus className="w-4 h-4" />
             Nuovo menu
           </Button>
@@ -48,13 +48,13 @@ export default async function DashboardPage() {
 
       {/* ── Trial banner ────────────────────────────────── */}
       {isTrialing && (
-        <div className="relative overflow-hidden bg-gradient-to-r from-emerald-500 to-teal-500 rounded-2xl px-6 py-5 flex items-center justify-between">
+        <div className="relative overflow-hidden bg-gradient-to-r from-emerald-500 to-teal-500 rounded-2xl px-6 py-5 flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3">
           {/* Background decoration */}
           <div className="absolute right-0 top-0 bottom-0 w-40 bg-white/5 rounded-l-full" />
           <div className="absolute right-16 top-0 bottom-0 w-24 bg-white/5 rounded-full" />
 
           <div className="flex items-center gap-4 relative z-10">
-            <div className="w-10 h-10 bg-white/20 rounded-xl flex items-center justify-center">
+            <div className="w-10 h-10 bg-white/20 rounded-xl flex items-center justify-center flex-shrink-0">
               <Sparkles className="w-5 h-5 text-white" />
             </div>
             <div>
@@ -66,8 +66,8 @@ export default async function DashboardPage() {
               </p>
             </div>
           </div>
-          <Link href="/dashboard/billing" className="relative z-10">
-            <button className="flex items-center gap-1.5 bg-white text-emerald-700 font-semibold text-sm px-4 py-2 rounded-xl hover:bg-emerald-50 transition-colors shadow-sm flex-shrink-0">
+          <Link href="/dashboard/billing" className="relative z-10 flex-shrink-0 mt-3 sm:mt-0">
+            <button className="flex items-center gap-1.5 bg-white text-emerald-700 font-semibold text-sm px-4 py-2 rounded-xl hover:bg-emerald-50 transition-colors shadow-sm w-full sm:w-auto justify-center">
               Attiva piano
               <ArrowRight className="w-3.5 h-3.5" />
             </button>
