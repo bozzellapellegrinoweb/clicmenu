@@ -13,14 +13,17 @@ export default async function DashboardLayout({
 
   if (!user) redirect("/login");
 
-  // Check if business exists, redirect to onboarding if not
-  const { data: business } = await supabase
-    .from("businesses")
-    .select("id")
-    .eq("user_id", user.id)
-    .single();
+  // Admin bypass — no onboarding required
+  const ADMIN_EMAILS = ["info@clicmenu.ai"];
+  if (!ADMIN_EMAILS.includes(user.email ?? "")) {
+    const { data: business } = await supabase
+      .from("businesses")
+      .select("id")
+      .eq("user_id", user.id)
+      .single();
 
-  if (!business) redirect("/onboarding");
+    if (!business) redirect("/onboarding");
+  }
 
   return (
     <div className="flex min-h-screen bg-[#f8fafc]">
