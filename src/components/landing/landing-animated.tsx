@@ -292,18 +292,19 @@ export function LandingAnimated() {
 
       {/* ── Stats row ───────────────────────────────────── */}
       <section className="max-w-6xl mx-auto px-4 py-16">
-        <div className="grid grid-cols-3 gap-6 text-center">
+        <div className="grid grid-cols-1 sm:grid-cols-3 gap-4 text-center">
           {[
-            { value: 2,   suffix: " min",  label: "Setup medio" },
-            { value: 5,   suffix: " lingue", label: "Traduzione auto" },
-            { value: 37,  suffix: "€/anno", label: "Tutto incluso" },
+            { value: 2,  suffix: " min",    label: "Setup medio" },
+            { value: 5,  suffix: " lingue", label: "Traduzione auto" },
+            { value: 37, suffix: "€/anno",  label: "Tutto incluso" },
           ].map((stat) => (
             <FadeUp key={stat.label}>
-              <div className="p-6 rounded-2xl bg-slate-50 border border-slate-100">
+              <div className="flex sm:flex-col items-center sm:items-center justify-between sm:justify-center gap-3 px-6 py-5 sm:p-6 rounded-2xl bg-slate-50 border border-slate-100">
+                <p className="text-slate-400 text-sm font-medium sm:hidden">{stat.label}</p>
                 <p className="text-4xl font-black text-slate-900 tracking-tight">
                   <CountUp target={stat.value} suffix={stat.suffix} />
                 </p>
-                <p className="text-sm text-slate-400 mt-1">{stat.label}</p>
+                <p className="hidden sm:block text-sm text-slate-400 mt-1">{stat.label}</p>
               </div>
             </FadeUp>
           ))}
