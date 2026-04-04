@@ -2,7 +2,7 @@ import { NextRequest, NextResponse } from "next/server";
 import { createClient } from "@/lib/supabase/server";
 import { getSupabaseAdmin } from "@/lib/supabase/admin";
 
-const ADMIN_EMAILS = ["admin@aresai.io"];
+const ADMIN_EMAILS = ["info@clicmenu.ai"];
 
 async function checkAdmin() {
   const supabase = await createClient();

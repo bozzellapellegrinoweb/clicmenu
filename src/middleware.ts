@@ -42,7 +42,7 @@ export async function middleware(request: NextRequest) {
   }
 
   if (user && (request.nextUrl.pathname === "/login" || request.nextUrl.pathname === "/signup")) {
-    const isAdmin = user.email === "admin@aresai.io";
+    const isAdmin = user.email === "info@clicmenu.ai";
     return NextResponse.redirect(new URL(isAdmin ? "/admin" : "/dashboard", request.url));
   }
 

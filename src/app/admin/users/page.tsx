@@ -29,7 +29,7 @@ export default async function AdminUsersPage() {
   const subByUserId = Object.fromEntries((subscriptions ?? []).map((s) => [s.user_id, s]));
 
   const rows = authUsers
-    .filter((u) => u.email !== "admin@aresai.io")
+    .filter((u) => u.email !== "info@clicmenu.ai")
     .map((u) => ({
       id: u.id,
       email: u.email ?? "—",
