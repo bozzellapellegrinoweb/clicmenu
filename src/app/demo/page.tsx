@@ -41,7 +41,7 @@ const categories: (Category & { items: Item[] })[] = [
       item("a1", antipastiId, "Bruschetta al Pomodoro", "Pane casereccio tostato con pomodoro fresco, basilico e olio EVO", 6.5, ["vegan"], 1),
       item("a2", antipastiId, "Carpaccio di Manzo", "Fettine sottili di manzo, rucola, scaglie di Parmigiano e limone", 12, [], 2),
       item("a3", antipastiId, "Frittura di Paranza", "Gamberi, calamari e alici fritti con limone e maionese homemade", 14, [], 3),
-      item("a4", antipastiId, "Burrata con Prosciutto Crudo", "Burrata fresca pugliese, prosciutto di Parma 24 mesi, pomodorini", 13, ["gluten-free"], 4),
+      item("a4", antipastiId, "Burrata con Prosciutto Crudo", "Burrata fresca pugliese, prosciutto di Parma 24 mesi, pomodorini", 13, ["senza glutine"], 4),
     ],
   },
   {
@@ -54,7 +54,7 @@ const categories: (Category & { items: Item[] })[] = [
     items: [
       item("p1", primiId, "Spaghetti alle Vongole", "Spaghetti di Gragnano, vongole veraci, aglio, prezzemolo e vino bianco", 16, [], 1),
       item("p2", primiId, "Paccheri al Ragù Napoletano", "Paccheri al forno con ragù lento 5 ore, fior di latte e basilico", 14, [], 2),
-      item("p3", primiId, "Risotto ai Funghi Porcini", "Riso Carnaroli, porcini freschi di stagione, burro di montagna e Parmigiano", 15, ["vegetariano", "gluten-free"], 3),
+      item("p3", primiId, "Risotto ai Funghi Porcini", "Riso Carnaroli, porcini freschi di stagione, burro di montagna e Parmigiano", 15, ["vegetariano", "senza glutine"], 3),
       item("p4", primiId, "Cacio e Pepe", "Tonnarelli freschi, pecorino Romano DOP, pepe nero macinato al momento", 13, ["vegetariano"], 4),
     ],
   },
@@ -83,9 +83,9 @@ const categories: (Category & { items: Item[] })[] = [
     sort_order: 4,
     created_at: new Date().toISOString(),
     items: [
-      item("s1", secondiId, "Branzino al Forno", "Branzino intero arrosto con patate, olive, capperi e pomodorini", 22, ["gluten-free"], 1),
-      item("s2", secondiId, "Tagliata di Manzo", "Controfiletto 300g alla griglia, rucola, scaglie di Grana Padano, aceto balsamico", 24, ["gluten-free"], 2),
-      item("s3", secondiId, "Pollo alla Cacciatora", "Pollo nostrano con peperoni, olive, capperi, pomodoro e vino bianco", 18, ["gluten-free"], 3),
+      item("s1", secondiId, "Branzino al Forno", "Branzino intero arrosto con patate, olive, capperi e pomodorini", 22, ["senza glutine"], 1),
+      item("s2", secondiId, "Tagliata di Manzo", "Controfiletto 300g alla griglia, rucola, scaglie di Grana Padano, aceto balsamico", 24, ["senza glutine"], 2),
+      item("s3", secondiId, "Pollo alla Cacciatora", "Pollo nostrano con peperoni, olive, capperi, pomodoro e vino bianco", 18, ["senza glutine"], 3),
     ],
   },
   {
@@ -97,8 +97,8 @@ const categories: (Category & { items: Item[] })[] = [
     created_at: new Date().toISOString(),
     items: [
       item("c1", contorniId, "Patatine Fritte", "Patate fresche tagliate al momento, olio di girasole, sale marino", 5, ["vegan", "vegetariano"], 1),
-      item("c2", contorniId, "Verdure Grigliate", "Mix stagionale di zucchine, melanzane, peperoni grigliati con erbe aromatiche", 7, ["vegan", "vegetariano", "gluten-free"], 2),
-      item("c3", contorniId, "Insalata Mista", "Rucola, valeriana, pomodorini, carote, finocchio", 6, ["vegan", "vegetariano", "gluten-free"], 3),
+      item("c2", contorniId, "Verdure Grigliate", "Mix stagionale di zucchine, melanzane, peperoni grigliati con erbe aromatiche", 7, ["vegan", "vegetariano", "senza glutine"], 2),
+      item("c3", contorniId, "Insalata Mista", "Rucola, valeriana, pomodorini, carote, finocchio", 6, ["vegan", "vegetariano", "senza glutine"], 3),
     ],
   },
   {
@@ -111,8 +111,8 @@ const categories: (Category & { items: Item[] })[] = [
     items: [
       item("d1", dolciId, "Tiramisù Classico", "Ricetta tradizionale con savoiardi, mascarpone, caffè espresso e cacao", 7, ["vegetariano"], 1),
       item("d2", dolciId, "Babà al Rum", "Babà napoletano artigianale imbevuto nel rum jamaicano, crema chantilly", 6, ["vegetariano"], 2),
-      item("d3", dolciId, "Panna Cotta ai Frutti di Bosco", "Panna cotta alla vaniglia del Madagascar, coulis di lamponi e mirtilli", 6.5, ["vegetariano", "gluten-free"], 3),
-      item("d4", dolciId, "Gelato Artigianale (3 palline)", "Scegli tra: fiordilatte, pistacchio di Bronte, cioccolato fondente, fragola, limone", 5, ["vegetariano", "gluten-free"], 4),
+      item("d3", dolciId, "Panna Cotta ai Frutti di Bosco", "Panna cotta alla vaniglia del Madagascar, coulis di lamponi e mirtilli", 6.5, ["vegetariano", "senza glutine"], 3),
+      item("d4", dolciId, "Gelato Artigianale (3 palline)", "Scegli tra: fiordilatte, pistacchio di Bronte, cioccolato fondente, fragola, limone", 5, ["vegetariano", "senza glutine"], 4),
     ],
   },
 ];
