@@ -12,6 +12,7 @@ import { Badge, TagBadge } from "@/components/ui/badge";
 import { useToast } from "@/components/ui/toast";
 import { formatPrice } from "@/lib/utils";
 import type { Menu, CategoryWithItems, Item, ItemTag } from "@/types";
+import { slugify } from "@/lib/slug";
 
 interface Props {
   menu: Menu;
@@ -28,7 +29,12 @@ export function MenuEditorClient({ menu, business, initialCategories }: Props) {
   const [showQR, setShowQR] = useState(false);
   const [saving, setSaving] = useState(false);
 
-  const publicUrl = `${process.env.NEXT_PUBLIC_APP_URL || "http://localhost:3030"}/m/${business.slug}`;
+  const appUrl = process.env.NEXT_PUBLIC_APP_URL || "http://localhost:3030";
+  const isProd = appUrl.includes("clicmenu.ai");
+  const menuSlug = slugify(menuName);
+  const publicUrl = isProd
+    ? `https://${business.slug}.clicmenu.ai/${menuSlug}`
+    : `${appUrl}/m/${business.slug}/${menuSlug}`;
 
   async function togglePublish() {
     setSaving(true);
