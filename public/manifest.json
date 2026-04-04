@@ -1,6 +1,6 @@
 {
   "name": "Clicmenu.ai — Menu Digitale",
-  "short_name": "Clicmenu.ai",
+  "short_name": "Clicmenu",
   "description": "Crea menu digitali con l'AI in pochi secondi",
   "start_url": "/dashboard",
   "display": "standalone",
