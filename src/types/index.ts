@@ -46,14 +46,36 @@ export interface Category {
 }
 
 export type ItemTag =
-  | "vegan"
+  // Allergeni EU 1169/2011
+  | "glutine"
+  | "crostacei"
+  | "uova"
+  | "pesce"
+  | "arachidi"
+  | "soia"
+  | "latte"
+  | "frutta a guscio"
+  | "sedano"
+  | "senape"
+  | "sesamo"
+  | "solfiti"
+  | "lupini"
+  | "molluschi"
+  // Status
+  | "surgelato"
+  // Dieta
+  | "vegano"
   | "vegetariano"
-  | "piccante"
   | "senza glutine"
   | "senza lattosio"
+  | "piccante"
+  // Qualità
   | "biologico"
-  | "novità"
-  | "consigliato";
+  | "dop"
+  | "igp"
+  | "km0"
+  | "consigliato"
+  | "novità";
 
 export interface Item {
   id: string;

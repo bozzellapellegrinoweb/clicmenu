@@ -11,7 +11,7 @@ import { Button } from "@/components/ui/button";
 import { Badge, TagBadge } from "@/components/ui/badge";
 import { useToast } from "@/components/ui/toast";
 import { formatPrice } from "@/lib/utils";
-import type { Menu, CategoryWithItems, Item } from "@/types";
+import type { Menu, CategoryWithItems, Item, ItemTag } from "@/types";
 
 interface Props {
   menu: Menu;
@@ -367,7 +367,7 @@ function ItemRow({
   const [localName, setLocalName] = useState(item.name);
   const [localDesc, setLocalDesc] = useState(item.description || "");
   const [localPrice, setLocalPrice] = useState(item.price?.toString() || "");
-  const [localTags, setLocalTags] = useState<string[]>(item.tags ?? []);
+  const [localTags, setLocalTags] = useState<ItemTag[]>(item.tags ?? []);
   const [showTagPicker, setShowTagPicker] = useState(false);
   const [photoUrl, setPhotoUrl] = useState<string | null>(item.photo_url ?? null);
   const [uploadingPhoto, setUploadingPhoto] = useState(false);
@@ -376,7 +376,7 @@ function ItemRow({
   // keep in sync if parent reorders
   void businessId;
 
-  function toggleTag(key: string) {
+  function toggleTag(key: ItemTag) {
     setLocalTags((prev) =>
       prev.includes(key) ? prev.filter((t) => t !== key) : [...prev, key]
     );
@@ -529,12 +529,12 @@ function ItemRow({
                         <p className="text-[10px] font-bold text-slate-400 uppercase tracking-wider mb-1.5">{catLabel}</p>
                         <div className="flex flex-wrap gap-1.5">
                           {catTags.map((tag) => {
-                            const active = localTags.includes(tag.key);
+                            const active = localTags.includes(tag.key as ItemTag);
                             return (
                               <button
                                 key={tag.key}
                                 type="button"
-                                onClick={() => toggleTag(tag.key)}
+                                onClick={() => toggleTag(tag.key as ItemTag)}
                                 className={`flex items-center gap-1 px-2 py-1 rounded-full text-xs font-medium transition-all border ${
                                   active
                                     ? TAG_CATEGORY_STYLES[tag.category]

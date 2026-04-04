@@ -38,7 +38,7 @@ const categories: (Category & { items: Item[] })[] = [
     sort_order: 1,
     created_at: new Date().toISOString(),
     items: [
-      item("a1", antipastiId, "Bruschetta al Pomodoro", "Pane casereccio tostato con pomodoro fresco, basilico e olio EVO", 6.5, ["vegan"], 1),
+      item("a1", antipastiId, "Bruschetta al Pomodoro", "Pane casereccio tostato con pomodoro fresco, basilico e olio EVO", 6.5, ["vegano"], 1),
       item("a2", antipastiId, "Carpaccio di Manzo", "Fettine sottili di manzo, rucola, scaglie di Parmigiano e limone", 12, [], 2),
       item("a3", antipastiId, "Frittura di Paranza", "Gamberi, calamari e alici fritti con limone e maionese homemade", 14, [], 3),
       item("a4", antipastiId, "Burrata con Prosciutto Crudo", "Burrata fresca pugliese, prosciutto di Parma 24 mesi, pomodorini", 13, ["senza glutine"], 4),
@@ -67,12 +67,12 @@ const categories: (Category & { items: Item[] })[] = [
     created_at: new Date().toISOString(),
     items: [
       item("pz1", pizzeId, "Margherita", "Pomodoro San Marzano DOP, fior di latte di Agerola, basilico fresco, olio EVO", 9, ["vegetariano"], 1),
-      item("pz2", pizzeId, "Marinara", "Pomodoro San Marzano, aglio, origano, olio EVO — la pizza più antica di Napoli", 7.5, ["vegan", "vegetariano"], 2),
+      item("pz2", pizzeId, "Marinara", "Pomodoro San Marzano, aglio, origano, olio EVO — la pizza più antica di Napoli", 7.5, ["vegano", "vegetariano"], 2),
       item("pz3", pizzeId, "Diavola", "Fior di latte, salame piccante calabrese, peperoncino, pomodoro", 11, ["piccante"], 3),
       item("pz4", pizzeId, "Quattro Stagioni", "Carciofi, funghi, prosciutto cotto, olive nere, fior di latte", 13, [], 4),
       item("pz5", pizzeId, "Bufala e Prosciutto Crudo", "Mozzarella di bufala campana DOP, prosciutto di Parma, rucola, Parmigiano", 15, [], 5),
       item("pz6", pizzeId, "Pistacchio e Salsiccia", "Base bianca, fior di latte, salsiccia artigianale, crema di pistacchio di Bronte", 14, [], 6),
-      item("pz7", pizzeId, "Vegana del Orto", "Pomodoro, verdure grigliate di stagione, pesto di basilico, olive Taggiasche", 12, ["vegan", "vegetariano"], 7),
+      item("pz7", pizzeId, "Vegana del Orto", "Pomodoro, verdure grigliate di stagione, pesto di basilico, olive Taggiasche", 12, ["vegano", "vegetariano"], 7),
     ],
   },
   {
@@ -96,9 +96,9 @@ const categories: (Category & { items: Item[] })[] = [
     sort_order: 5,
     created_at: new Date().toISOString(),
     items: [
-      item("c1", contorniId, "Patatine Fritte", "Patate fresche tagliate al momento, olio di girasole, sale marino", 5, ["vegan", "vegetariano"], 1),
-      item("c2", contorniId, "Verdure Grigliate", "Mix stagionale di zucchine, melanzane, peperoni grigliati con erbe aromatiche", 7, ["vegan", "vegetariano", "senza glutine"], 2),
-      item("c3", contorniId, "Insalata Mista", "Rucola, valeriana, pomodorini, carote, finocchio", 6, ["vegan", "vegetariano", "senza glutine"], 3),
+      item("c1", contorniId, "Patatine Fritte", "Patate fresche tagliate al momento, olio di girasole, sale marino", 5, ["vegano", "vegetariano"], 1),
+      item("c2", contorniId, "Verdure Grigliate", "Mix stagionale di zucchine, melanzane, peperoni grigliati con erbe aromatiche", 7, ["vegano", "vegetariano", "senza glutine"], 2),
+      item("c3", contorniId, "Insalata Mista", "Rucola, valeriana, pomodorini, carote, finocchio", 6, ["vegano", "vegetariano", "senza glutine"], 3),
     ],
   },
   {
