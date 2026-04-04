@@ -1,6 +1,7 @@
 import { redirect } from "next/navigation";
 import { createClient } from "@/lib/supabase/server";
 import { Sidebar } from "@/components/dashboard/sidebar";
+import { PWAInstallBanner } from "@/components/dashboard/pwa-install-banner";
 
 export default async function DashboardLayout({
   children,
@@ -29,6 +30,7 @@ export default async function DashboardLayout({
           {children}
         </div>
       </main>
+      <PWAInstallBanner />
     </div>
   );
 }
