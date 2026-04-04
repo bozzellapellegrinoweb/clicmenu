@@ -4,7 +4,7 @@
  * URL: http://localhost:3030/demo
  */
 import { PublicMenuView } from "@/components/public-menu/public-menu-view";
-import type { Business, Menu, Category, Item } from "@/types";
+import type { Business, Menu, Category, Item, ItemTag } from "@/types";
 
 const business: Business = {
   id: "demo-business",
@@ -18,7 +18,7 @@ const business: Business = {
   created_at: new Date().toISOString(),
 };
 
-function item(id: string, catId: string, name: string, description: string, price: number, tags: string[] = [], sort_order = 0): Item {
+function item(id: string, catId: string, name: string, description: string, price: number, tags: ItemTag[] = [], sort_order = 0): Item {
   return { id, category_id: catId, name, description, price, currency: "EUR", photo_url: null, tags, is_available: true, sort_order, created_at: new Date().toISOString() };
 }
 
