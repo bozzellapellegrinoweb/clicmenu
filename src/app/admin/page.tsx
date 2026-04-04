@@ -1,4 +1,4 @@
-import { supabaseAdmin } from "@/lib/supabase/admin";
+import { getSupabaseAdmin } from "@/lib/supabase/admin";
 import { Users, Store, CreditCard, TrendingUp, Euro, Clock } from "lucide-react";
 import type { Metadata } from "next";
 
@@ -13,12 +13,12 @@ export default async function AdminPage() {
     { count: pastDueSubs },
     { data: recentBusinesses },
   ] = await Promise.all([
-    supabaseAdmin.from("businesses").select("*", { count: "exact", head: true }),
-    supabaseAdmin.from("menus").select("*", { count: "exact", head: true }),
-    supabaseAdmin.from("subscriptions").select("*", { count: "exact", head: true }).eq("status", "active"),
-    supabaseAdmin.from("subscriptions").select("*", { count: "exact", head: true }).eq("status", "trialing"),
-    supabaseAdmin.from("subscriptions").select("*", { count: "exact", head: true }).eq("status", "past_due"),
-    supabaseAdmin
+    getSupabaseAdmin().from("businesses").select("*", { count: "exact", head: true }),
+    getSupabaseAdmin().from("menus").select("*", { count: "exact", head: true }),
+    getSupabaseAdmin().from("subscriptions").select("*", { count: "exact", head: true }).eq("status", "active"),
+    getSupabaseAdmin().from("subscriptions").select("*", { count: "exact", head: true }).eq("status", "trialing"),
+    getSupabaseAdmin().from("subscriptions").select("*", { count: "exact", head: true }).eq("status", "past_due"),
+    getSupabaseAdmin()
       .from("businesses")
       .select("id, name, type, slug, created_at, user_id, subscriptions(status, trial_ends_at)")
       .order("created_at", { ascending: false })

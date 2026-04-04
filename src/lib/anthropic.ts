@@ -2,9 +2,9 @@ import Anthropic from "@anthropic-ai/sdk";
 import type { ExtractedMenu } from "@/types";
 import { VALID_TAG_KEYS } from "@/lib/tags";
 
-const client = new Anthropic({
-  apiKey: process.env.ANTHROPIC_API_KEY!,
-});
+function getClient() {
+  return new Anthropic({ apiKey: process.env.ANTHROPIC_API_KEY! });
+}
 
 const EXTRACTION_PROMPT = `Analizza questa immagine/documento di un menu (ristorante, bar, spa, o simile) ed estrai tutte le informazioni in formato JSON strutturato.
 
@@ -47,7 +47,7 @@ export async function translateMenu(
   targetLang: string
 ): Promise<typeof content> {
   const langNames: Record<string, string> = { en: "English", de: "German", fr: "French", es: "Spanish", it: "Italian" };
-  const message = await client.messages.create({
+  const message = await getClient().messages.create({
     model: "claude-haiku-4-5-20251001",
     max_tokens: 4096,
     messages: [{
@@ -82,7 +82,7 @@ export async function extractMenuFromImage(
         },
       };
 
-  const message = await client.messages.create({
+  const message = await getClient().messages.create({
     model: "claude-haiku-4-5-20251001",
     max_tokens: 4096,
     messages: [

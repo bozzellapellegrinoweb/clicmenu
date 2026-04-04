@@ -1,13 +1,9 @@
 import { NextRequest, NextResponse } from "next/server";
 import { getStripe } from "@/lib/stripe";
-import { createClient as createSupabaseClient } from "@supabase/supabase-js";
+import { getSupabaseAdmin } from "@/lib/supabase/admin";
 import type Stripe from "stripe";
 
 export async function POST(request: NextRequest) {
-  const supabaseAdmin = createSupabaseClient(
-    process.env.NEXT_PUBLIC_SUPABASE_URL!,
-    process.env.SUPABASE_SERVICE_ROLE_KEY!
-  );
   const body = await request.text();
   const sig = request.headers.get("stripe-signature")!;
 
@@ -19,13 +15,15 @@ export async function POST(request: NextRequest) {
     return NextResponse.json({ error: "Invalid signature" }, { status: 400 });
   }
 
+  const db = getSupabaseAdmin();
+
   switch (event.type) {
     case "checkout.session.completed": {
       const session = event.data.object as Stripe.Checkout.Session;
       const userId = session.metadata?.supabase_user_id;
       if (!userId) break;
 
-      await supabaseAdmin.from("subscriptions").upsert(
+      await db.from("subscriptions").upsert(
         {
           user_id: userId,
           stripe_customer_id: session.customer as string,
@@ -50,12 +48,9 @@ export async function POST(request: NextRequest) {
           ? new Date(periodEnd * 1000).toISOString()
           : null;
 
-      await supabaseAdmin
+      await db
         .from("subscriptions")
-        .update({
-          status: sub.status as string,
-          expires_at: expiresAt,
-        })
+        .update({ status: sub.status as string, expires_at: expiresAt })
         .eq("user_id", userId);
       break;
     }
@@ -67,10 +62,7 @@ export async function POST(request: NextRequest) {
         const sub = await getStripe().subscriptions.retrieve(invoiceSubId);
         const userId = sub.metadata?.supabase_user_id;
         if (userId) {
-          await supabaseAdmin
-            .from("subscriptions")
-            .update({ status: "past_due" })
-            .eq("user_id", userId);
+          await db.from("subscriptions").update({ status: "past_due" }).eq("user_id", userId);
         }
       }
       break;

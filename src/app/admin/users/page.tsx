@@ -1,4 +1,4 @@
-import { supabaseAdmin } from "@/lib/supabase/admin";
+import { getSupabaseAdmin } from "@/lib/supabase/admin";
 import Link from "next/link";
 import type { Metadata } from "next";
 
@@ -13,14 +13,14 @@ const statusColor: Record<string, string> = {
 
 export default async function AdminUsersPage() {
   // Get all auth users
-  const { data: { users: authUsers } } = await supabaseAdmin.auth.admin.listUsers({ perPage: 500 });
+  const { data: { users: authUsers } } = await getSupabaseAdmin().auth.admin.listUsers({ perPage: 500 });
 
   // Get all businesses + subscriptions
-  const { data: businesses } = await supabaseAdmin
+  const { data: businesses } = await getSupabaseAdmin()
     .from("businesses")
     .select("id, name, slug, type, user_id, created_at");
 
-  const { data: subscriptions } = await supabaseAdmin
+  const { data: subscriptions } = await getSupabaseAdmin()
     .from("subscriptions")
     .select("user_id, status, trial_ends_at, current_period_end");
 

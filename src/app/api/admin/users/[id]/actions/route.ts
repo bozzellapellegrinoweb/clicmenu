@@ -1,6 +1,6 @@
 import { NextRequest, NextResponse } from "next/server";
 import { createClient } from "@/lib/supabase/server";
-import { supabaseAdmin } from "@/lib/supabase/admin";
+import { getSupabaseAdmin } from "@/lib/supabase/admin";
 
 const ADMIN_EMAILS = ["admin@aresai.io"];
 
@@ -23,11 +23,11 @@ export async function POST(
   const { action } = body;
 
   // Get target user email for actions that need it
-  const { data: { user: targetUser } } = await supabaseAdmin.auth.admin.getUserById(id);
+  const { data: { user: targetUser } } = await getSupabaseAdmin().auth.admin.getUserById(id);
   if (!targetUser) return NextResponse.json({ error: "Utente non trovato" }, { status: 404 });
 
   if (action === "reset_password") {
-    const { error } = await supabaseAdmin.auth.resetPasswordForEmail(targetUser.email!, {
+    const { error } = await getSupabaseAdmin().auth.resetPasswordForEmail(targetUser.email!, {
       redirectTo: `${process.env.NEXT_PUBLIC_APP_URL}/auth/callback?type=recovery`,
     });
     if (error) return NextResponse.json({ error: error.message }, { status: 500 });
@@ -39,7 +39,7 @@ export async function POST(
     const validStatuses = ["active", "trialing", "past_due", "canceled"];
     if (!validStatuses.includes(status)) return NextResponse.json({ error: "Stato non valido" }, { status: 400 });
 
-    const { error } = await supabaseAdmin
+    const { error } = await getSupabaseAdmin()
       .from("subscriptions")
       .upsert({ user_id: id, status }, { onConflict: "user_id" });
     if (error) return NextResponse.json({ error: error.message }, { status: 500 });
@@ -48,21 +48,21 @@ export async function POST(
 
   if (action === "delete_user") {
     // Delete business data first (cascade should handle the rest)
-    const { data: business } = await supabaseAdmin.from("businesses").select("id").eq("user_id", id).single();
+    const { data: business } = await getSupabaseAdmin().from("businesses").select("id").eq("user_id", id).single();
     if (business) {
-      const { data: menus } = await supabaseAdmin.from("menus").select("id").eq("business_id", business.id);
+      const { data: menus } = await getSupabaseAdmin().from("menus").select("id").eq("business_id", business.id);
       for (const menu of menus ?? []) {
-        const { data: cats } = await supabaseAdmin.from("categories").select("id").eq("menu_id", menu.id);
+        const { data: cats } = await getSupabaseAdmin().from("categories").select("id").eq("menu_id", menu.id);
         for (const cat of cats ?? []) {
-          await supabaseAdmin.from("items").delete().eq("category_id", cat.id);
+          await getSupabaseAdmin().from("items").delete().eq("category_id", cat.id);
         }
-        await supabaseAdmin.from("categories").delete().eq("menu_id", menu.id);
+        await getSupabaseAdmin().from("categories").delete().eq("menu_id", menu.id);
       }
-      await supabaseAdmin.from("menus").delete().eq("business_id", business.id);
-      await supabaseAdmin.from("businesses").delete().eq("id", business.id);
+      await getSupabaseAdmin().from("menus").delete().eq("business_id", business.id);
+      await getSupabaseAdmin().from("businesses").delete().eq("id", business.id);
     }
-    await supabaseAdmin.from("subscriptions").delete().eq("user_id", id);
-    const { error } = await supabaseAdmin.auth.admin.deleteUser(id);
+    await getSupabaseAdmin().from("subscriptions").delete().eq("user_id", id);
+    const { error } = await getSupabaseAdmin().auth.admin.deleteUser(id);
     if (error) return NextResponse.json({ error: error.message }, { status: 500 });
     return NextResponse.json({ message: "Utente eliminato" });
   }

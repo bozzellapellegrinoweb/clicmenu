@@ -1,4 +1,4 @@
-import { supabaseAdmin } from "@/lib/supabase/admin";
+import { getSupabaseAdmin } from "@/lib/supabase/admin";
 import { notFound } from "next/navigation";
 import Link from "next/link";
 import { ArrowLeft } from "lucide-react";
@@ -16,10 +16,10 @@ export default async function AdminUserDetailPage({ params }: { params: Promise<
     { data: subscription },
     { data: menus },
   ] = await Promise.all([
-    supabaseAdmin.auth.admin.getUserById(id),
-    supabaseAdmin.from("businesses").select("*").eq("user_id", id).single(),
-    supabaseAdmin.from("subscriptions").select("*").eq("user_id", id).single(),
-    supabaseAdmin.from("menus").select("id, name, is_published, created_at").eq("business_id",
+    getSupabaseAdmin().auth.admin.getUserById(id),
+    getSupabaseAdmin().from("businesses").select("*").eq("user_id", id).single(),
+    getSupabaseAdmin().from("subscriptions").select("*").eq("user_id", id).single(),
+    getSupabaseAdmin().from("menus").select("id, name, is_published, created_at").eq("business_id",
       // Will be filtered after we get business
       "00000000-0000-0000-0000-000000000000"
     ).limit(0),
@@ -29,7 +29,7 @@ export default async function AdminUserDetailPage({ params }: { params: Promise<
 
   // Get menus for this business
   const { data: userMenus } = business
-    ? await supabaseAdmin.from("menus").select("id, name, is_published, created_at").eq("business_id", business.id)
+    ? await getSupabaseAdmin().from("menus").select("id, name, is_published, created_at").eq("business_id", business.id)
     : { data: [] };
 
   const statusColor: Record<string, string> = {

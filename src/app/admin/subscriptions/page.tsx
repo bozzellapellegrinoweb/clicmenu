@@ -1,4 +1,4 @@
-import { supabaseAdmin } from "@/lib/supabase/admin";
+import { getSupabaseAdmin } from "@/lib/supabase/admin";
 import type { Metadata } from "next";
 
 export const metadata: Metadata = { title: "Abbonamenti — Admin Clicmenu.ai" };
@@ -11,12 +11,12 @@ const statusColor: Record<string, string> = {
 };
 
 export default async function AdminSubscriptionsPage() {
-  const { data: subscriptions } = await supabaseAdmin
+  const { data: subscriptions } = await getSupabaseAdmin()
     .from("subscriptions")
     .select("*, businesses(name, slug, type)")
     .order("created_at", { ascending: false });
 
-  const { data: { users: authUsers } } = await supabaseAdmin.auth.admin.listUsers({ perPage: 500 });
+  const { data: { users: authUsers } } = await getSupabaseAdmin().auth.admin.listUsers({ perPage: 500 });
   const emailById = Object.fromEntries(authUsers.map((u) => [u.id, u.email]));
 
   const counts = {

@@ -1,11 +1,6 @@
 import { createClient } from "@/lib/supabase/server";
-import { createClient as createAdmin } from "@supabase/supabase-js";
+import { getSupabaseAdmin } from "@/lib/supabase/admin";
 import { Eye, TrendingUp, Camera, BarChart2 } from "lucide-react";
-
-const supabaseAdmin = createAdmin(
-  process.env.NEXT_PUBLIC_SUPABASE_URL!,
-  process.env.SUPABASE_SERVICE_ROLE_KEY!
-);
 
 function formatDay(dateStr: string, locale = "it-IT") {
   return new Date(dateStr).toLocaleDateString(locale, { weekday: "short", day: "numeric", month: "short" });
@@ -28,7 +23,7 @@ export default async function AnalyticsPage() {
   const sevenDaysAgo  = new Date(now.getTime() -  7 * 24 * 60 * 60 * 1000).toISOString();
 
   // Fetch last 30 days of views
-  const { data: views } = await supabaseAdmin
+  const { data: views } = await getSupabaseAdmin()
     .from("menu_views")
     .select("viewed_at")
     .eq("business_id", business.id)
@@ -36,7 +31,7 @@ export default async function AnalyticsPage() {
     .order("viewed_at", { ascending: true });
 
   // Fetch last 30 days of clicks
-  const { data: clicks } = await supabaseAdmin
+  const { data: clicks } = await getSupabaseAdmin()
     .from("item_clicks")
     .select("item_id, clicked_at")
     .eq("business_id", business.id)
@@ -74,7 +69,7 @@ export default async function AnalyticsPage() {
   // Fetch item names for top items
   const topItems: { id: string; name: string; count: number }[] = [];
   if (topItemIds.length > 0) {
-    const { data: itemRows } = await supabaseAdmin
+    const { data: itemRows } = await getSupabaseAdmin()
       .from("items")
       .select("id, name")
       .in("id", topItemIds.map((i) => i.id));
