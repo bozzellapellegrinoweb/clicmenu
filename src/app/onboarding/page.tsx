@@ -66,6 +66,13 @@ export default function OnboardingPage() {
       expires_at: new Date(Date.now() + 14 * 24 * 60 * 60 * 1000).toISOString(),
     });
 
+    // Send welcome email (fire and forget)
+    fetch("/api/email/send", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ type: "welcome", name: name.trim() }),
+    }).catch(() => {});
+
     toast(`Benvenuto in Clicmenu.ai, ${name}!`, "success");
     router.push("/dashboard");
   }
@@ -103,7 +110,7 @@ export default function OnboardingPage() {
               <div className="glass-emerald rounded-xl px-4 py-3">
                 <p className="text-xs text-slate-400">Il tuo menu sarà accessibile su:</p>
                 <p className="text-sm font-mono text-emerald-700 mt-0.5">
-                  aresai.it/m/{slugify(name) || "nome-attivita"}
+                  clicmenu.ai/m/{slugify(name) || "nome-attivita"}
                 </p>
               </div>
             )}
