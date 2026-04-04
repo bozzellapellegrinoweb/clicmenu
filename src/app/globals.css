@@ -1,26 +1,155 @@
 @import "tailwindcss";
 
-:root {
-  --background: #ffffff;
-  --foreground: #171717;
+@theme {
+  --color-emerald-50: #ecfdf5;
+  --color-emerald-100: #d1fae5;
+  --color-emerald-200: #a7f3d0;
+  --color-emerald-300: #6ee7b7;
+  --color-emerald-400: #34d399;
+  --color-emerald-500: #10b981;
+  --color-emerald-600: #059669;
+  --color-emerald-700: #047857;
+  --color-emerald-800: #065f46;
+  --color-emerald-900: #064e3b;
+
+  --font-sans: "Plus Jakarta Sans", system-ui, sans-serif;
 }
 
-@theme inline {
-  --color-background: var(--background);
-  --color-foreground: var(--foreground);
-  --font-sans: var(--font-geist-sans);
-  --font-mono: var(--font-geist-mono);
-}
+@layer base {
+  * {
+    box-sizing: border-box;
+    margin: 0;
+    padding: 0;
+  }
 
-@media (prefers-color-scheme: dark) {
-  :root {
-    --background: #0a0a0a;
-    --foreground: #ededed;
+  body {
+    background: #ffffff;
+    color: #0f172a;
+    font-family: var(--font-sans);
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
   }
 }
 
-body {
-  background: var(--background);
-  color: var(--foreground);
-  font-family: Arial, Helvetica, sans-serif;
+@layer utilities {
+  /* ── Glassmorphism ───────────────────────────────── */
+  .glass {
+    background: rgba(255, 255, 255, 0.6);
+    backdrop-filter: blur(24px);
+    -webkit-backdrop-filter: blur(24px);
+    border: 1px solid rgba(255, 255, 255, 0.4);
+    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.04), 0 4px 16px rgba(0, 0, 0, 0.04);
+  }
+
+  .glass-strong {
+    background: rgba(255, 255, 255, 0.88);
+    backdrop-filter: blur(32px);
+    -webkit-backdrop-filter: blur(32px);
+    border: 1px solid rgba(255, 255, 255, 0.7);
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.06), 0 16px 48px rgba(0, 0, 0, 0.06);
+  }
+
+  .glass-emerald {
+    background: rgba(16, 185, 129, 0.08);
+    backdrop-filter: blur(24px);
+    -webkit-backdrop-filter: blur(24px);
+    border: 1px solid rgba(16, 185, 129, 0.2);
+  }
+
+  /* ── Gradients ───────────────────────────────────── */
+  .gradient-bg {
+    background: radial-gradient(ellipse at top left, #d1fae5 0%, #ffffff 50%, #ecfdf5 100%);
+  }
+
+  .gradient-hero {
+    background:
+      radial-gradient(ellipse at 15% 40%, rgba(167, 243, 208, 0.55) 0%, transparent 55%),
+      radial-gradient(ellipse at 85% 15%, rgba(110, 231, 183, 0.40) 0%, transparent 45%),
+      radial-gradient(ellipse at 55% 85%, rgba(209, 250, 229, 0.50) 0%, transparent 50%),
+      #ffffff;
+  }
+
+  .gradient-dark {
+    background: linear-gradient(135deg, #064e3b 0%, #065f46 40%, #047857 100%);
+  }
+
+  /* ── Text gradient ───────────────────────────────── */
+  .text-gradient {
+    background: linear-gradient(135deg, #047857, #10b981, #34d399);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+  }
+
+  /* ── Card glow ───────────────────────────────────── */
+  .card-glow {
+    box-shadow:
+      0 0 0 1px rgba(16, 185, 129, 0.15),
+      0 4px 24px rgba(16, 185, 129, 0.12),
+      0 24px 64px rgba(16, 185, 129, 0.08);
+  }
+
+  .card-glow-sm {
+    box-shadow:
+      0 0 0 1px rgba(16, 185, 129, 0.12),
+      0 2px 12px rgba(16, 185, 129, 0.10);
+  }
+
+  /* ── Floating card shadow ────────────────────────── */
+  .shadow-float {
+    box-shadow:
+      0 4px 6px rgba(0, 0, 0, 0.04),
+      0 12px 32px rgba(0, 0, 0, 0.08),
+      0 32px 64px rgba(0, 0, 0, 0.06);
+  }
+
+  /* ── Shimmer animation ───────────────────────────── */
+  .shimmer {
+    background: linear-gradient(
+      90deg,
+      rgba(255, 255, 255, 0) 0%,
+      rgba(255, 255, 255, 0.6) 50%,
+      rgba(255, 255, 255, 0) 100%
+    );
+    background-size: 200% 100%;
+    animation: shimmer 1.5s infinite;
+  }
+
+  @keyframes shimmer {
+    0% { background-position: -200% 0; }
+    100% { background-position: 200% 0; }
+  }
+
+  /* ── Scrollbar hidden ────────────────────────────── */
+  .no-scrollbar::-webkit-scrollbar { display: none; }
+  .no-scrollbar { -ms-overflow-style: none; scrollbar-width: none; }
+
+  /* ── Dot pulse animation ─────────────────────────── */
+  @keyframes pulse-dot {
+    0%, 100% { opacity: 1; transform: scale(1); }
+    50% { opacity: 0.5; transform: scale(0.85); }
+  }
+  .dot-pulse { animation: pulse-dot 2s ease-in-out infinite; }
+
+  /* ── Float animation ─────────────────────────────── */
+  @keyframes float {
+    0%, 100% { transform: translateY(0px); }
+    50% { transform: translateY(-8px); }
+  }
+  .animate-float { animation: float 4s ease-in-out infinite; }
+
+  /* ── Sidebar active indicator ────────────────────── */
+  .nav-active-indicator {
+    position: relative;
+  }
+  .nav-active-indicator::before {
+    content: '';
+    position: absolute;
+    left: 0;
+    top: 20%;
+    bottom: 20%;
+    width: 3px;
+    background: #10b981;
+    border-radius: 0 3px 3px 0;
+  }
 }
