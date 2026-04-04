@@ -66,11 +66,18 @@ export default function OnboardingPage() {
       expires_at: new Date(Date.now() + 14 * 24 * 60 * 60 * 1000).toISOString(),
     });
 
-    // Send welcome email (fire and forget)
+    // Send welcome email + sync CRM (fire and forget)
+    const trimmedName = name.trim();
     fetch("/api/email/send", {
       method: "POST",
       headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({ type: "welcome", name: name.trim() }),
+      body: JSON.stringify({ type: "welcome", name: trimmedName }),
+    }).catch(() => {});
+
+    fetch("/api/crm/sync", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ name: trimmedName }),
     }).catch(() => {});
 
     toast(`Benvenuto in Clicmenu.ai, ${name}!`, "success");
