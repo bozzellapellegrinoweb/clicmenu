@@ -60,7 +60,6 @@ async function sendEvent(events: EventData[]) {
       custom_data: e.customData,
     })),
     access_token: ACCESS_TOKEN,
-    test_event_code: "TEST98759",
   };
 
   try {
