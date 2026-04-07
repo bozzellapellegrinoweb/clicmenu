@@ -42,10 +42,19 @@ export default function OnboardingPage() {
       return;
     }
 
-    // Generate unique slug
+    // Generate unique slug — try clean slug first, then add short suffix if taken
     const baseSlug = slugify(name);
-    const randomSuffix = Math.random().toString(36).slice(2, 6);
-    const slug = `${baseSlug}-${randomSuffix}`;
+    let slug = baseSlug;
+
+    const { count } = await supabase
+      .from("businesses")
+      .select("id", { count: "exact", head: true })
+      .eq("slug", baseSlug);
+
+    if ((count ?? 0) > 0) {
+      const suffix = Math.random().toString(36).slice(2, 5);
+      slug = `${baseSlug}-${suffix}`;
+    }
 
     const { error } = await supabase.from("businesses").insert({
       user_id: user.id,
@@ -122,7 +131,7 @@ export default function OnboardingPage() {
               <div className="glass-emerald rounded-xl px-4 py-3">
                 <p className="text-xs text-slate-400">Il tuo menu sarà accessibile su:</p>
                 <p className="text-sm font-mono text-emerald-700 mt-0.5">
-                  clicmenu.ai/m/{slugify(name) || "nome-attivita"}
+                  {slugify(name) || "nome-attivita"}.clicmenu.ai
                 </p>
               </div>
             )}
