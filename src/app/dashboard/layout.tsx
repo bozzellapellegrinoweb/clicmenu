@@ -13,8 +13,10 @@ export default async function DashboardLayout({
 
   if (!user) redirect("/login");
 
-  // Admin bypass — no onboarding required
+  // Admin → always redirect to /admin
   const ADMIN_EMAILS = ["info@clicmenu.ai"];
+  if (ADMIN_EMAILS.includes(user.email ?? "")) redirect("/admin");
+
   if (!ADMIN_EMAILS.includes(user.email ?? "")) {
     const { data: business } = await supabase
       .from("businesses")
