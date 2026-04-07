@@ -1,4 +1,5 @@
 import type { Metadata } from "next";
+import type { ReactNode } from "react";
 import Link from "next/link";
 
 export const metadata: Metadata = {
@@ -184,7 +185,7 @@ export default function TerminiPage() {
   );
 }
 
-function Section({ title, children }: { title: string; children: React.ReactNode }) {
+function Section({ title, children }: { title: string; children: ReactNode }) {
   return (
     <section>
       <h2 className="text-lg font-bold text-slate-900 mb-4 pb-2 border-b border-slate-100">{title}</h2>
@@ -193,7 +194,7 @@ function Section({ title, children }: { title: string; children: React.ReactNode
   );
 }
 
-function SubSection({ title, children }: { title: string; children: React.ReactNode }) {
+function SubSection({ title, children }: { title: string; children: ReactNode }) {
   return (
     <div className="mt-4">
       <h3 className="text-sm font-semibold text-slate-800 mb-2">{title}</h3>
@@ -202,7 +203,7 @@ function SubSection({ title, children }: { title: string; children: React.ReactN
   );
 }
 
-function InfoBox({ children }: { children: React.ReactNode }) {
+function InfoBox({ children }: { children: ReactNode }) {
   return (
     <div className="bg-slate-50 border border-slate-200 rounded-xl p-4 text-sm leading-relaxed">
       {children}
