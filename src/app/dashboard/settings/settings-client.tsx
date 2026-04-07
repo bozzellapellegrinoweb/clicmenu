@@ -1,9 +1,10 @@
 "use client";
 
 import { useState, useRef } from "react";
-import { Upload, Trash2, Building2, Phone, MapPin, CheckCircle, Check, Palette, Star } from "lucide-react";
+import { Upload, Trash2, Building2, Phone, MapPin, CheckCircle, Check, Palette, Star, Link2 } from "lucide-react";
 import { createClient } from "@/lib/supabase/client";
 import { useToast } from "@/components/ui/toast";
+import { slugify } from "@/lib/slug";
 
 interface Business {
   id: string;
@@ -35,6 +36,7 @@ export function SettingsClient({ business }: { business: Business }) {
   const [logoUrl, setLogoUrl] = useState<string | null>(business.logo_url);
   const [uploading, setUploading] = useState(false);
   const [name, setName] = useState(business.name);
+  const [slug, setSlug] = useState(business.slug);
   const [address, setAddress] = useState(business.address ?? "");
   const [phone, setPhone] = useState(business.phone ?? "");
   const [brandColor, setBrandColor] = useState(business.brand_color ?? "#10b981");
@@ -82,15 +84,34 @@ export function SettingsClient({ business }: { business: Business }) {
 
   async function saveInfo() {
     if (!name.trim()) return;
+    const cleanSlug = slugify(slug);
+    if (!cleanSlug) { toast("Slug non valido", "error"); return; }
     setSaving(true);
     const supabase = createClient();
+
+    // Check slug availability if changed
+    if (cleanSlug !== business.slug) {
+      const { count } = await supabase
+        .from("businesses")
+        .select("id", { count: "exact", head: true })
+        .eq("slug", cleanSlug);
+      if ((count ?? 0) > 0) {
+        toast("Questo URL è già in uso, scegline un altro", "error");
+        setSaving(false);
+        return;
+      }
+    }
+
     const { error } = await supabase
       .from("businesses")
-      .update({ name: name.trim(), address: address || null, phone: phone || null, brand_color: brandColor, google_review_url: googleReviewUrl || null })
+      .update({ name: name.trim(), slug: cleanSlug, address: address || null, phone: phone || null, brand_color: brandColor, google_review_url: googleReviewUrl || null })
       .eq("id", business.id);
     setSaving(false);
     if (error) toast("Errore salvataggio", "error");
-    else toast("Informazioni aggiornate", "success");
+    else {
+      setSlug(cleanSlug);
+      toast("Informazioni aggiornate", "success");
+    }
   }
 
   return (
@@ -213,6 +234,21 @@ export function SettingsClient({ business }: { business: Business }) {
             </div>
           </div>
           <div>
+            <label className="block text-sm font-medium text-slate-700 mb-1.5">URL del menu (sottodominio)</label>
+            <div className="relative">
+              <Link2 className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-slate-400" />
+              <input
+                value={slug}
+                onChange={(e) => setSlug(e.target.value.toLowerCase().replace(/[^a-z0-9-]/g, "-").replace(/-+/g, "-").replace(/^-|-$/g, ""))}
+                placeholder="nome-attivita"
+                className="w-full pl-9 pr-4 py-2.5 rounded-xl border border-slate-200 text-sm font-mono focus:outline-none focus:ring-2 focus:ring-emerald-500/30 focus:border-emerald-400"
+              />
+            </div>
+            <p className="text-xs text-slate-400 mt-1.5">
+              Il tuo menu sarà su: <span className="font-mono text-slate-500">{slug || "nome-attivita"}.clicmenu.ai</span>
+            </p>
+          </div>
+          <div>
             <label className="block text-sm font-medium text-slate-700 mb-1.5">Indirizzo</label>
             <div className="relative">
               <MapPin className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-slate-400" />
@@ -283,16 +319,16 @@ export function SettingsClient({ business }: { business: Business }) {
           <a
             href={
               (process.env.NEXT_PUBLIC_APP_URL || "").includes("clicmenu.ai")
-                ? `https://${business.slug}.clicmenu.ai`
-                : `/m/${business.slug}`
+                ? `https://${slug}.clicmenu.ai`
+                : `/m/${slug}`
             }
             target="_blank"
             className="hover:underline font-mono"
             style={{ color: brandColor }}
           >
             {(process.env.NEXT_PUBLIC_APP_URL || "").includes("clicmenu.ai")
-              ? `${business.slug}.clicmenu.ai`
-              : `/m/${business.slug}`}
+              ? `${slug}.clicmenu.ai`
+              : `/m/${slug}`}
           </a>
         </p>
       </div>
