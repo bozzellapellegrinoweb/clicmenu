@@ -532,7 +532,7 @@ export function LandingAnimated() {
           <p className="text-sm text-slate-400">© 2026 Clicmenu.ai. Tutti i diritti riservati.</p>
           <div className="flex gap-6 text-sm text-slate-400">
             <Link href="/privacy" className="hover:text-slate-700 transition-colors">Privacy</Link>
-            <Link href="/terms" className="hover:text-slate-700 transition-colors">Termini</Link>
+            <Link href="/termini" className="hover:text-slate-700 transition-colors">Termini</Link>
           </div>
         </div>
       </footer>

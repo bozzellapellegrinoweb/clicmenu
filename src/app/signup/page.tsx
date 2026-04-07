@@ -111,7 +111,7 @@ export default function SignupPage() {
 
         <p className="text-center text-xs text-slate-400 mt-4">
           Registrandoti accetti i{" "}
-          <Link href="/terms" className="underline hover:text-slate-600 transition-colors">Termini di servizio</Link>
+          <Link href="/termini" className="underline hover:text-slate-600 transition-colors">Termini di servizio</Link>
           {" "}e la{" "}
           <Link href="/privacy" className="underline hover:text-slate-600 transition-colors">Privacy Policy</Link>
         </p>

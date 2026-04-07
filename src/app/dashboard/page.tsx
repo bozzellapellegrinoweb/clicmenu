@@ -23,9 +23,12 @@ export default async function DashboardPage() {
   const totalMenus = menus?.length ?? 0;
 
   const isTrialing = subscription?.status === "trialing";
-  const trialDaysLeft = subscription?.expires_at
+  const trialDaysLeft = subscription?.expires_at && isTrialing
     ? Math.max(0, Math.ceil((new Date(subscription.expires_at).getTime() - Date.now()) / (1000 * 60 * 60 * 24)))
-    : 0;
+    : null;
+
+  const showTrialBanner = isTrialing && trialDaysLeft !== null;
+  const isUrgent = trialDaysLeft !== null && trialDaysLeft <= 3;
 
   return (
     <div className="space-y-8">
@@ -47,9 +50,12 @@ export default async function DashboardPage() {
       </div>
 
       {/* ── Trial banner ────────────────────────────────── */}
-      {isTrialing && (
-        <div className="relative overflow-hidden bg-gradient-to-r from-emerald-500 to-teal-500 rounded-2xl px-6 py-5 flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3">
-          {/* Background decoration */}
+      {showTrialBanner && (
+        <div className={`relative overflow-hidden rounded-2xl px-6 py-5 flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3 ${
+          isUrgent
+            ? "bg-gradient-to-r from-red-500 to-orange-500"
+            : "bg-gradient-to-r from-emerald-500 to-teal-500"
+        }`}>
           <div className="absolute right-0 top-0 bottom-0 w-40 bg-white/5 rounded-l-full" />
           <div className="absolute right-16 top-0 bottom-0 w-24 bg-white/5 rounded-full" />
 
@@ -59,15 +65,23 @@ export default async function DashboardPage() {
             </div>
             <div>
               <p className="text-sm font-bold text-white">
-                Periodo di prova — {trialDaysLeft} giorni rimanenti
+                {trialDaysLeft === 0
+                  ? "La prova gratuita scade oggi!"
+                  : trialDaysLeft === 1
+                  ? "Ultimo giorno di prova — attiva il piano!"
+                  : `Periodo di prova — ${trialDaysLeft} giorni rimanenti`}
               </p>
-              <p className="text-xs text-emerald-100 mt-0.5">
-                Attiva il piano Pro per continuare dopo la scadenza
+              <p className="text-xs text-white/80 mt-0.5">
+                {isUrgent
+                  ? "Attiva subito per non perdere i menu creati"
+                  : "Attiva il piano Pro per continuare dopo la scadenza"}
               </p>
             </div>
           </div>
           <Link href="/dashboard/billing" className="relative z-10 flex-shrink-0 mt-3 sm:mt-0">
-            <button className="flex items-center gap-1.5 bg-white text-emerald-700 font-semibold text-sm px-4 py-2 rounded-xl hover:bg-emerald-50 transition-colors shadow-sm w-full sm:w-auto justify-center">
+            <button className={`flex items-center gap-1.5 bg-white font-semibold text-sm px-4 py-2 rounded-xl transition-colors shadow-sm w-full sm:w-auto justify-center ${
+              isUrgent ? "text-red-700 hover:bg-red-50" : "text-emerald-700 hover:bg-emerald-50"
+            }`}>
               Attiva piano
               <ArrowRight className="w-3.5 h-3.5" />
             </button>
