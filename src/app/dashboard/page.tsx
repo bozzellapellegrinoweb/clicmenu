@@ -22,9 +22,14 @@ export default async function DashboardPage() {
   const publishedCount = menus?.filter((m) => m.is_published).length ?? 0;
   const totalMenus = menus?.length ?? 0;
 
-  const isTrialing = subscription?.status === "trialing";
-  const trialDaysLeft = subscription?.expires_at && isTrialing
-    ? Math.max(0, Math.ceil((new Date(subscription.expires_at).getTime() - Date.now()) / (1000 * 60 * 60 * 24)))
+  // If no subscription record yet, treat as trialing from business.created_at
+  const isTrialing = subscription?.status === "trialing" || (!subscription && !!business);
+  const trialExpiresAt = subscription?.expires_at
+    ?? (business?.created_at
+      ? new Date(new Date(business.created_at).getTime() + 14 * 24 * 60 * 60 * 1000).toISOString()
+      : null);
+  const trialDaysLeft = trialExpiresAt && isTrialing
+    ? Math.max(0, Math.ceil((new Date(trialExpiresAt).getTime() - Date.now()) / (1000 * 60 * 60 * 24)))
     : null;
 
   const showTrialBanner = isTrialing && trialDaysLeft !== null;

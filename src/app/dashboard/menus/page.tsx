@@ -5,6 +5,13 @@ import { Button } from "@/components/ui/button";
 import { Card } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 
+const appUrl = process.env.NEXT_PUBLIC_APP_URL || "http://localhost:3030";
+const isProd = appUrl.includes("clicmenu.ai");
+
+function publicUrl(slug: string) {
+  return isProd ? `https://${slug}.clicmenu.ai` : `/m/${slug}`;
+}
+
 export default async function MenusPage() {
   const supabase = await createClient();
   const { data: { user } } = await supabase.auth.getUser();
@@ -86,7 +93,7 @@ export default async function MenusPage() {
                 </Link>
                 {menu.is_published && (
                   <Link
-                    href={`/m/${business?.slug}`}
+                    href={business?.slug ? publicUrl(business.slug) : "#"}
                     target="_blank"
                     className="flex-1"
                   >

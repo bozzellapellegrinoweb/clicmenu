@@ -280,8 +280,19 @@ export function SettingsClient({ business }: { business: Business }) {
       <div className="bg-slate-50 rounded-2xl border border-slate-100 p-4">
         <p className="text-xs text-slate-500">
           <span className="font-medium">URL pubblico menu:</span>{" "}
-          <a href={`/m/${business.slug}`} target="_blank" className="hover:underline font-mono" style={{ color: brandColor }}>
-            /m/{business.slug}
+          <a
+            href={
+              (process.env.NEXT_PUBLIC_APP_URL || "").includes("clicmenu.ai")
+                ? `https://${business.slug}.clicmenu.ai`
+                : `/m/${business.slug}`
+            }
+            target="_blank"
+            className="hover:underline font-mono"
+            style={{ color: brandColor }}
+          >
+            {(process.env.NEXT_PUBLIC_APP_URL || "").includes("clicmenu.ai")
+              ? `${business.slug}.clicmenu.ai`
+              : `/m/${business.slug}`}
           </a>
         </p>
       </div>
