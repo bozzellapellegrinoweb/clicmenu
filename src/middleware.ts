@@ -8,7 +8,8 @@ const RESERVED_SUBDOMAINS = new Set(["www", "app", "api", "admin", "mail", "smtp
 
 export async function middleware(request: NextRequest) {
   // ── Subdomain routing (ciaobello.clicmenu.ai → /m/ciaobello) ──────────────
-  const hostname = request.headers.get("host") ?? "";
+  // x-forwarded-host is set by the Cloudflare Worker when proxying *.clicmenu.ai
+  const hostname = request.headers.get("x-forwarded-host") ?? request.headers.get("host") ?? "";
   const subdomainMatch = hostname.match(/^([a-z0-9-]+)\.clicmenu\.ai$/i);
 
   if (subdomainMatch && !RESERVED_SUBDOMAINS.has(subdomainMatch[1].toLowerCase())) {
