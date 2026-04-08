@@ -1,7 +1,6 @@
 import { createClient } from "@/lib/supabase/server";
 import { notFound, redirect } from "next/navigation";
 import type { Metadata } from "next";
-import { PublicMenuView } from "@/components/public-menu/public-menu-view";
 import { slugify } from "@/lib/slug";
 
 export async function generateMetadata({ params }: { params: Promise<{ slug: string }> }): Promise<Metadata> {
@@ -34,10 +33,11 @@ export default async function PublicMenuPage({ params }: { params: Promise<{ slu
 
   const { data: menus } = await supabase
     .from("menus")
-    .select("*")
+    .select("id, name")
     .eq("business_id", business.id)
     .eq("is_published", true)
-    .order("created_at", { ascending: true });
+    .order("created_at", { ascending: true })
+    .limit(1);
 
   if (!menus || menus.length === 0) {
     return (
@@ -50,29 +50,5 @@ export default async function PublicMenuPage({ params }: { params: Promise<{ slu
     );
   }
 
-  // Redirect to first menu slug so URL shows /nome-menu
   redirect(`/m/${slug}/${slugify(menus[0].name)}`);
-
-  // Load categories and items for all published menus
-  const menusWithData = await Promise.all(
-    menus.map(async (menu) => {
-      const { data: categories } = await supabase
-        .from("categories")
-        .select("*, items(*)")
-        .eq("menu_id", menu.id)
-        .order("sort_order");
-
-      return {
-        ...menu,
-        categories: (categories || []).map((cat) => ({
-          ...cat,
-          items: (cat.items || []).sort(
-            (a: { sort_order: number }, b: { sort_order: number }) => a.sort_order - b.sort_order
-          ),
-        })),
-      };
-    })
-  );
-
-  return <PublicMenuView business={business} menus={menusWithData} />;
 }
