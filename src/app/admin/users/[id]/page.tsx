@@ -1,7 +1,7 @@
 import { getSupabaseAdmin } from "@/lib/supabase/admin";
 import { notFound } from "next/navigation";
 import Link from "next/link";
-import { ArrowLeft } from "lucide-react";
+import { ArrowLeft, Eye, MousePointerClick, TrendingUp } from "lucide-react";
 import { UserActions } from "./user-actions";
 import type { Metadata } from "next";
 
@@ -33,6 +33,31 @@ export default async function AdminUserDetailPage({ params }: { params: Promise<
   const { data: userMenus } = business
     ? await db.from("menus").select("id, name, is_published, created_at").eq("business_id", business.id).order("created_at", { ascending: false })
     : { data: [] };
+
+  // Analytics per questo utente (ultimi 30 giorni)
+  const ago30 = new Date(Date.now() - 30 * 24 * 60 * 60 * 1000).toISOString();
+  const ago7 = new Date(Date.now() - 7 * 24 * 60 * 60 * 1000).toISOString();
+  const [{ data: views }, { data: clicks }] = business ? await Promise.all([
+    db.from("menu_views").select("viewed_at").eq("business_id", business.id).gte("viewed_at", ago30),
+    db.from("item_clicks").select("clicked_at").eq("business_id", business.id).gte("clicked_at", ago30),
+  ]) : [{ data: [] }, { data: [] }];
+
+  const totalViews = views?.length ?? 0;
+  const views7 = (views ?? []).filter(v => v.viewed_at >= ago7).length;
+  const totalClicks = clicks?.length ?? 0;
+
+  // Visite per giorno ultimi 7
+  const dailyMap: Record<string, number> = {};
+  for (let i = 6; i >= 0; i--) {
+    const d = new Date(Date.now() - i * 24 * 60 * 60 * 1000);
+    dailyMap[d.toISOString().slice(0, 10)] = 0;
+  }
+  for (const v of views ?? []) {
+    const key = v.viewed_at.slice(0, 10);
+    if (key in dailyMap) dailyMap[key]++;
+  }
+  const dailyData = Object.entries(dailyMap).map(([date, count]) => ({ date, count }));
+  const maxBar = Math.max(...dailyData.map(d => d.count), 1);
 
   const trialDaysLeft = subscription?.expires_at && subscription.status === "trialing"
     ? Math.ceil((new Date(subscription.expires_at).getTime() - Date.now()) / (1000 * 60 * 60 * 24))
@@ -115,6 +140,49 @@ export default async function AdminUserDetailPage({ params }: { params: Promise<
                   </div>
                 )}
               </dl>
+            </div>
+          )}
+
+          {/* Analytics */}
+          {business && (
+            <div className="bg-white rounded-2xl border border-slate-100 shadow-sm p-6">
+              <h2 className="font-semibold text-slate-900 mb-4">Analytics (30 giorni)</h2>
+              <div className="grid grid-cols-3 gap-3 mb-5">
+                <div className="bg-blue-50 rounded-xl p-3 text-center">
+                  <Eye className="w-4 h-4 text-blue-500 mx-auto mb-1" />
+                  <p className="text-xl font-bold text-slate-900">{totalViews}</p>
+                  <p className="text-xs text-slate-500">Visite tot.</p>
+                </div>
+                <div className="bg-emerald-50 rounded-xl p-3 text-center">
+                  <TrendingUp className="w-4 h-4 text-emerald-500 mx-auto mb-1" />
+                  <p className="text-xl font-bold text-slate-900">{views7}</p>
+                  <p className="text-xs text-slate-500">Visite 7gg</p>
+                </div>
+                <div className="bg-violet-50 rounded-xl p-3 text-center">
+                  <MousePointerClick className="w-4 h-4 text-violet-500 mx-auto mb-1" />
+                  <p className="text-xl font-bold text-slate-900">{totalClicks}</p>
+                  <p className="text-xs text-slate-500">Click piatti</p>
+                </div>
+              </div>
+              {totalViews > 0 && (
+                <div className="space-y-2">
+                  {dailyData.map(({ date, count }) => (
+                    <div key={date} className="flex items-center gap-2">
+                      <span className="text-xs text-slate-400 w-20 flex-shrink-0">
+                        {new Date(date).toLocaleDateString("it-IT", { weekday: "short", day: "numeric" })}
+                      </span>
+                      <div className="flex-1 bg-slate-50 rounded-full h-5 overflow-hidden">
+                        <div
+                          className="h-full rounded-full bg-gradient-to-r from-emerald-400 to-teal-500 flex items-center justify-end pr-2"
+                          style={{ width: count === 0 ? "0%" : `${Math.max((count / maxBar) * 100, 6)}%` }}
+                        >
+                          {count > 0 && <span className="text-xs font-bold text-white">{count}</span>}
+                        </div>
+                      </div>
+                    </div>
+                  ))}
+                </div>
+              )}
             </div>
           )}
 

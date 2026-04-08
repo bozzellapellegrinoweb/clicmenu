@@ -32,7 +32,7 @@ export default async function AdminPage() {
     db.from("subscriptions").select("*", { count: "exact", head: true }).eq("status", "past_due"),
     db.from("subscriptions").select("user_id, status, expires_at").eq("status", "trialing"),
     db.from("businesses")
-      .select("id, name, type, slug, created_at, user_id")
+      .select("id, name, type, slug, created_at, user_id, subscriptions(status, expires_at)")
       .order("created_at", { ascending: false })
       .limit(8),
     db.auth.admin.listUsers({ perPage: 500 }),
@@ -126,33 +126,44 @@ export default async function AdminPage() {
               <tr className="border-b border-slate-100 bg-slate-50">
                 <th className="text-left px-6 py-3 text-slate-500 font-medium">Attività</th>
                 <th className="text-left px-6 py-3 text-slate-500 font-medium">Email</th>
+                <th className="text-left px-6 py-3 text-slate-500 font-medium">Piano</th>
                 <th className="text-left px-6 py-3 text-slate-500 font-medium">Registrazione</th>
                 <th className="text-left px-6 py-3 text-slate-500 font-medium">URL</th>
                 <th className="text-left px-6 py-3 text-slate-500 font-medium"></th>
               </tr>
             </thead>
             <tbody>
-              {(recentBusinesses ?? []).map((biz) => (
-                <tr key={biz.id} className="border-b border-slate-50 hover:bg-slate-50 transition-colors">
-                  <td className="px-6 py-3 font-medium text-slate-900">{biz.name}</td>
-                  <td className="px-6 py-3 text-slate-500 text-xs">{emailById[biz.user_id] ?? "—"}</td>
-                  <td className="px-6 py-3 text-slate-500 text-xs">
-                    {new Date(biz.created_at).toLocaleDateString("it-IT")}
-                  </td>
-                  <td className="px-6 py-3">
-                    <a href={`https://${biz.slug}.clicmenu.ai`} target="_blank"
-                      className="inline-flex items-center px-2.5 py-1 rounded-lg bg-emerald-50 text-emerald-700 text-xs font-mono hover:bg-emerald-100 transition-colors">
-                      {biz.slug}.clicmenu.ai
-                    </a>
-                  </td>
-                  <td className="px-6 py-3">
-                    <Link href={`/admin/users/${biz.user_id}`}
-                      className="text-xs px-3 py-1 bg-slate-100 hover:bg-slate-200 text-slate-700 rounded-lg font-medium transition-colors">
-                      Dettaglio
-                    </Link>
-                  </td>
-                </tr>
-              ))}
+              {(recentBusinesses ?? []).map((biz) => {
+                const sub = (biz.subscriptions as unknown as Array<{ status: string; expires_at: string | null }>)?.[0];
+                return (
+                  <tr key={biz.id} className="border-b border-slate-50 hover:bg-slate-50 transition-colors">
+                    <td className="px-6 py-3 font-medium text-slate-900">{biz.name}</td>
+                    <td className="px-6 py-3 text-slate-500 text-xs">{emailById[biz.user_id] ?? "—"}</td>
+                    <td className="px-6 py-3">
+                      {sub ? (
+                        <span className={`inline-flex px-2 py-0.5 rounded-full text-xs font-medium ${statusColor[sub.status] ?? "bg-slate-100 text-slate-600"}`}>
+                          {sub.status}
+                        </span>
+                      ) : <span className="text-slate-300 text-xs">—</span>}
+                    </td>
+                    <td className="px-6 py-3 text-slate-500 text-xs">
+                      {new Date(biz.created_at).toLocaleDateString("it-IT")}
+                    </td>
+                    <td className="px-6 py-3">
+                      <a href={`https://${biz.slug}.clicmenu.ai`} target="_blank"
+                        className="inline-flex items-center px-2.5 py-1 rounded-lg bg-emerald-50 text-emerald-700 text-xs font-mono hover:bg-emerald-100 transition-colors">
+                        {biz.slug}.clicmenu.ai
+                      </a>
+                    </td>
+                    <td className="px-6 py-3">
+                      <Link href={`/admin/users/${biz.user_id}`}
+                        className="text-xs px-3 py-1 bg-slate-100 hover:bg-slate-200 text-slate-700 rounded-lg font-medium transition-colors">
+                        Dettaglio
+                      </Link>
+                    </td>
+                  </tr>
+                );
+              })}
               {(recentBusinesses ?? []).length === 0 && (
                 <tr><td colSpan={5} className="px-6 py-10 text-center text-slate-400">Nessuna attività registrata</td></tr>
               )}

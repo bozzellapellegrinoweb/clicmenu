@@ -2,16 +2,18 @@
 
 import Link from "next/link";
 import { usePathname } from "next/navigation";
-import { LayoutDashboard, Users, CreditCard, LogOut, ShieldCheck, Menu, X } from "lucide-react";
+import { LayoutDashboard, Users, CreditCard, LogOut, BarChart2, Menu, X, ShieldCheck } from "lucide-react";
 import { createClient } from "@/lib/supabase/client";
 import { useRouter } from "next/navigation";
 import { useEffect, useState } from "react";
 import { cn } from "@/lib/utils";
+import Image from "next/image";
 
 const nav = [
   { label: "Overview", href: "/admin", icon: LayoutDashboard },
   { label: "Utenti", href: "/admin/users", icon: Users },
   { label: "Abbonamenti", href: "/admin/subscriptions", icon: CreditCard },
+  { label: "Analytics", href: "/admin/analytics", icon: BarChart2 },
 ];
 
 export function AdminSidebar() {
@@ -38,7 +40,7 @@ export function AdminSidebar() {
             className={cn(
               "flex items-center gap-3 px-3 py-2.5 rounded-xl text-sm font-medium transition-colors",
               active
-                ? "bg-emerald-500 text-white"
+                ? "bg-emerald-500 text-white shadow-sm shadow-emerald-500/30"
                 : "text-slate-400 hover:bg-slate-800 hover:text-white"
             )}
           >
@@ -51,7 +53,11 @@ export function AdminSidebar() {
   );
 
   const Footer = () => (
-    <div className="px-3 py-4 border-t border-slate-800">
+    <div className="px-3 py-4 border-t border-slate-800 space-y-1">
+      <div className="flex items-center gap-2 px-3 py-2 mb-2">
+        <ShieldCheck className="w-4 h-4 text-emerald-400" />
+        <span className="text-xs text-emerald-400 font-semibold tracking-wide uppercase">Super Admin</span>
+      </div>
       <button
         onClick={handleLogout}
         className="flex items-center gap-3 px-3 py-2.5 w-full rounded-xl text-sm font-medium text-slate-400 hover:bg-slate-800 hover:text-white transition-colors"
@@ -62,15 +68,9 @@ export function AdminSidebar() {
     </div>
   );
 
-  const HeaderContent = () => (
+  const Logo = () => (
     <div className="flex items-center gap-3">
-      <div className="w-9 h-9 bg-emerald-500 rounded-xl flex items-center justify-center flex-shrink-0">
-        <ShieldCheck className="w-5 h-5 text-white" />
-      </div>
-      <div>
-        <p className="font-bold text-white text-sm">Clicmenu.ai</p>
-        <p className="text-xs text-slate-400">Super Admin</p>
-      </div>
+      <Image src="/logo.svg" alt="Clicmenu.ai" width={120} height={30} className="brightness-0 invert" />
     </div>
   );
 
@@ -78,7 +78,7 @@ export function AdminSidebar() {
     <>
       {/* ── Mobile top header ──────────────────────────── */}
       <header className="md:hidden fixed top-0 left-0 right-0 z-40 bg-slate-900 border-b border-slate-800 h-14 flex items-center justify-between px-4">
-        <HeaderContent />
+        <Logo />
         <button
           onClick={() => setMobileOpen(true)}
           className="w-9 h-9 rounded-xl bg-slate-800 flex items-center justify-center"
@@ -89,10 +89,7 @@ export function AdminSidebar() {
 
       {/* ── Mobile overlay ────────────────────────────── */}
       {mobileOpen && (
-        <div
-          className="md:hidden fixed inset-0 z-50 bg-black/40 backdrop-blur-sm"
-          onClick={() => setMobileOpen(false)}
-        />
+        <div className="md:hidden fixed inset-0 z-50 bg-black/50 backdrop-blur-sm" onClick={() => setMobileOpen(false)} />
       )}
 
       {/* ── Mobile drawer ─────────────────────────────── */}
@@ -101,7 +98,7 @@ export function AdminSidebar() {
         mobileOpen ? "translate-x-0" : "-translate-x-full"
       )}>
         <div className="h-14 flex items-center justify-between px-5 border-b border-slate-800">
-          <HeaderContent />
+          <Logo />
           <button onClick={() => setMobileOpen(false)} className="w-8 h-8 rounded-xl bg-slate-800 flex items-center justify-center">
             <X className="w-4 h-4 text-slate-400" />
           </button>
@@ -113,7 +110,7 @@ export function AdminSidebar() {
       {/* ── Desktop sidebar ───────────────────────────── */}
       <aside className="hidden md:flex w-60 flex-shrink-0 min-h-screen bg-slate-900 flex-col">
         <div className="px-5 py-6 border-b border-slate-800">
-          <HeaderContent />
+          <Logo />
         </div>
         <NavLinks />
         <Footer />
