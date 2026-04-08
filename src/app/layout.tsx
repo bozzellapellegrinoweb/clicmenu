@@ -6,6 +6,7 @@ import { ToastProvider } from "@/components/ui/toast";
 import { MetaPageTracker } from "@/components/meta-tracker";
 
 const META_PIXEL_ID = "1440770307277416";
+const GA_ID = "G-VTSNLWPQMD";
 
 const plusJakarta = Plus_Jakarta_Sans({
   subsets: ["latin"],
@@ -55,6 +56,15 @@ export default function RootLayout({
   return (
     <html lang="it" className={`${plusJakarta.variable} h-full`}>
       <head>
+        {/* Google Analytics */}
+        <Script src={`https://www.googletagmanager.com/gtag/js?id=${GA_ID}`} strategy="afterInteractive" />
+        <Script id="google-analytics" strategy="afterInteractive">{`
+          window.dataLayer = window.dataLayer || [];
+          function gtag(){dataLayer.push(arguments);}
+          gtag('js', new Date());
+          gtag('config', '${GA_ID}');
+        `}</Script>
+
         {/* Meta Pixel — browser-side */}
         <Script id="meta-pixel" strategy="afterInteractive">{`
           !function(f,b,e,v,n,t,s)
