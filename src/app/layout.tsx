@@ -7,7 +7,6 @@ import { MetaPageTracker } from "@/components/meta-tracker";
 import { CookieBanner } from "@/components/cookie-banner";
 
 const META_PIXEL_ID = "1440770307277416";
-const GA_ID = "G-VTSNLWPQMD";
 
 const plusJakarta = Plus_Jakarta_Sans({
   subsets: ["latin"],
@@ -70,16 +69,13 @@ export default function RootLayout({
           });
         `}</Script>
 
-        {/* ── Google Analytics (gtag.js) ── */}
-        <Script
-          src={`https://www.googletagmanager.com/gtag/js?id=${GA_ID}`}
-          strategy="afterInteractive"
-        />
-        <Script id="google-analytics" strategy="afterInteractive">{`
-          window.dataLayer = window.dataLayer || [];
-          function gtag(){dataLayer.push(arguments);}
-          gtag('js', new Date());
-          gtag('config', '${GA_ID}');
+        {/* ── Google Tag Manager ── */}
+        <Script id="gtm" strategy="afterInteractive">{`
+          (function(w,d,s,l,i){w[l]=w[l]||[];w[l].push({'gtm.start':
+          new Date().getTime(),event:'gtm.js'});var f=d.getElementsByTagName(s)[0],
+          j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
+          'https://www.googletagmanager.com/gtm.js?id='+i+dl;f.parentNode.insertBefore(j,f);
+          })(window,document,'script','dataLayer','GTM-5VX37659');
         `}</Script>
 
         {/* ── Meta Pixel ── */}
@@ -104,6 +100,10 @@ export default function RootLayout({
         </noscript>
       </head>
       <body className="min-h-full">
+        <noscript>
+          <iframe src="https://www.googletagmanager.com/ns.html?id=GTM-5VX37659"
+            height="0" width="0" style={{display:"none",visibility:"hidden"}} />
+        </noscript>
         <ToastProvider>
           <MetaPageTracker />
           {children}
