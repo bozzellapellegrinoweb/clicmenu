@@ -46,6 +46,21 @@ export async function POST(
     return NextResponse.json({ message: `Abbonamento impostato a: ${status}` });
   }
 
+  if (action === "extend_trial") {
+    const { days, currentExpiresAt } = body;
+    if (!days || days < 1) return NextResponse.json({ error: "Giorni non validi" }, { status: 400 });
+    // Extend from current expiry or from now
+    const base = currentExpiresAt && new Date(currentExpiresAt).getTime() > Date.now()
+      ? new Date(currentExpiresAt)
+      : new Date();
+    const newExpiry = new Date(base.getTime() + days * 24 * 60 * 60 * 1000).toISOString();
+    const { error } = await getSupabaseAdmin()
+      .from("subscriptions")
+      .upsert({ user_id: id, status: "trialing", expires_at: newExpiry }, { onConflict: "user_id" });
+    if (error) return NextResponse.json({ error: error.message }, { status: 500 });
+    return NextResponse.json({ message: `Trial esteso di ${days} giorni (scade ${new Date(newExpiry).toLocaleDateString("it-IT")})` });
+  }
+
   if (action === "delete_user") {
     // Delete business data first (cascade should handle the rest)
     const { data: business } = await getSupabaseAdmin().from("businesses").select("id").eq("user_id", id).single();

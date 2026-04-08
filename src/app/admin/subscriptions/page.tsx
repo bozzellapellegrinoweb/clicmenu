@@ -13,7 +13,7 @@ const statusColor: Record<string, string> = {
 export default async function AdminSubscriptionsPage() {
   const { data: subscriptions } = await getSupabaseAdmin()
     .from("subscriptions")
-    .select("*, businesses(name, slug, type)")
+    .select("id, user_id, status, expires_at, stripe_customer_id, created_at, businesses(name, slug, type)")
     .order("created_at", { ascending: false });
 
   const { data: { users: authUsers } } = await getSupabaseAdmin().auth.admin.listUsers({ perPage: 500 });
@@ -53,7 +53,7 @@ export default async function AdminSubscriptionsPage() {
                 <th className="text-left px-6 py-3 text-slate-500 font-medium">Utente</th>
                 <th className="text-left px-6 py-3 text-slate-500 font-medium">Attività</th>
                 <th className="text-left px-6 py-3 text-slate-500 font-medium">Stato</th>
-                <th className="text-left px-6 py-3 text-slate-500 font-medium">Fine trial</th>
+                <th className="text-left px-6 py-3 text-slate-500 font-medium">Scadenza</th>
                 <th className="text-left px-6 py-3 text-slate-500 font-medium">Creato</th>
                 <th className="text-left px-6 py-3 text-slate-500 font-medium">Valore</th>
               </tr>
@@ -66,7 +66,7 @@ export default async function AdminSubscriptionsPage() {
                     <td className="px-6 py-3 text-slate-700 text-xs">{emailById[sub.user_id] ?? sub.user_id.slice(0, 8) + "…"}</td>
                     <td className="px-6 py-3">
                       {biz ? (
-                        <a href={`/m/${biz.slug}`} target="_blank" className="font-medium text-slate-900 hover:text-emerald-600 transition-colors">
+                        <a href={`https://${biz.slug}.clicmenu.ai`} target="_blank" className="font-medium text-slate-900 hover:text-emerald-600 transition-colors">
                           {biz.name}
                         </a>
                       ) : <span className="text-slate-400">—</span>}
@@ -77,7 +77,7 @@ export default async function AdminSubscriptionsPage() {
                       </span>
                     </td>
                     <td className="px-6 py-3 text-slate-500 text-xs">
-                      {sub.trial_ends_at ? new Date(sub.trial_ends_at).toLocaleDateString("it-IT") : "—"}
+                      {sub.expires_at ? new Date(sub.expires_at).toLocaleDateString("it-IT") : "—"}
                     </td>
                     <td className="px-6 py-3 text-slate-500 text-xs">
                       {new Date(sub.created_at).toLocaleDateString("it-IT")}

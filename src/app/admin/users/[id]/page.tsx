@@ -7,37 +7,36 @@ import type { Metadata } from "next";
 
 export const metadata: Metadata = { title: "Dettaglio Utente — Admin Clicmenu.ai" };
 
+const statusColor: Record<string, string> = {
+  active: "bg-emerald-100 text-emerald-700",
+  trialing: "bg-orange-100 text-orange-700",
+  past_due: "bg-red-100 text-red-700",
+  canceled: "bg-slate-100 text-slate-600",
+};
+
 export default async function AdminUserDetailPage({ params }: { params: Promise<{ id: string }> }) {
   const { id } = await params;
+  const db = getSupabaseAdmin();
 
   const [
     { data: { user: authUser } },
     { data: business },
     { data: subscription },
-    { data: menus },
   ] = await Promise.all([
-    getSupabaseAdmin().auth.admin.getUserById(id),
-    getSupabaseAdmin().from("businesses").select("*").eq("user_id", id).single(),
-    getSupabaseAdmin().from("subscriptions").select("*").eq("user_id", id).single(),
-    getSupabaseAdmin().from("menus").select("id, name, is_published, created_at").eq("business_id",
-      // Will be filtered after we get business
-      "00000000-0000-0000-0000-000000000000"
-    ).limit(0),
+    db.auth.admin.getUserById(id),
+    db.from("businesses").select("*").eq("user_id", id).single(),
+    db.from("subscriptions").select("*").eq("user_id", id).single(),
   ]);
 
   if (!authUser) notFound();
 
-  // Get menus for this business
   const { data: userMenus } = business
-    ? await getSupabaseAdmin().from("menus").select("id, name, is_published, created_at").eq("business_id", business.id)
+    ? await db.from("menus").select("id, name, is_published, created_at").eq("business_id", business.id).order("created_at", { ascending: false })
     : { data: [] };
 
-  const statusColor: Record<string, string> = {
-    active: "bg-emerald-100 text-emerald-700",
-    trialing: "bg-orange-100 text-orange-700",
-    past_due: "bg-red-100 text-red-700",
-    canceled: "bg-slate-100 text-slate-600",
-  };
+  const trialDaysLeft = subscription?.expires_at && subscription.status === "trialing"
+    ? Math.ceil((new Date(subscription.expires_at).getTime() - Date.now()) / (1000 * 60 * 60 * 24))
+    : null;
 
   return (
     <div>
@@ -51,7 +50,6 @@ export default async function AdminUserDetailPage({ params }: { params: Promise<
 
       <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
 
-        {/* Left: info + actions */}
         <div className="lg:col-span-2 space-y-6">
 
           {/* Account info */}
@@ -97,10 +95,10 @@ export default async function AdminUserDetailPage({ params }: { params: Promise<
                   <dd className="text-slate-700 capitalize">{business.type}</dd>
                 </div>
                 <div className="flex justify-between">
-                  <dt className="text-slate-500">Slug</dt>
+                  <dt className="text-slate-500">URL pubblico</dt>
                   <dd>
-                    <a href={`/m/${business.slug}`} target="_blank" className="text-emerald-600 hover:underline font-mono text-xs">
-                      /m/{business.slug}
+                    <a href={`https://${business.slug}.clicmenu.ai`} target="_blank" className="text-emerald-600 hover:underline font-mono text-xs">
+                      {business.slug}.clicmenu.ai
                     </a>
                   </dd>
                 </div>
@@ -157,16 +155,24 @@ export default async function AdminUserDetailPage({ params }: { params: Promise<
                     </span>
                   </dd>
                 </div>
-                {subscription.trial_ends_at && (
-                  <div className="flex justify-between">
-                    <dt className="text-slate-500">Fine trial</dt>
-                    <dd className="text-slate-700">{new Date(subscription.trial_ends_at).toLocaleDateString("it-IT")}</dd>
-                  </div>
-                )}
-                {subscription.current_period_end && (
+                {subscription.expires_at && (
                   <div className="flex justify-between">
                     <dt className="text-slate-500">Scadenza</dt>
-                    <dd className="text-slate-700">{new Date(subscription.current_period_end * 1000).toLocaleDateString("it-IT")}</dd>
+                    <dd className="text-slate-700">{new Date(subscription.expires_at).toLocaleDateString("it-IT")}</dd>
+                  </div>
+                )}
+                {trialDaysLeft !== null && (
+                  <div className="flex justify-between">
+                    <dt className="text-slate-500">Giorni rimasti</dt>
+                    <dd className={`font-medium ${trialDaysLeft <= 3 ? "text-red-600" : "text-slate-700"}`}>
+                      {trialDaysLeft <= 0 ? "Scaduto" : `${trialDaysLeft} giorni`}
+                    </dd>
+                  </div>
+                )}
+                {subscription.stripe_customer_id && (
+                  <div className="flex justify-between">
+                    <dt className="text-slate-500">Stripe ID</dt>
+                    <dd className="font-mono text-xs text-slate-500">{subscription.stripe_customer_id}</dd>
                   </div>
                 )}
               </dl>
@@ -175,8 +181,12 @@ export default async function AdminUserDetailPage({ params }: { params: Promise<
             )}
           </div>
 
-          {/* Actions */}
-          <UserActions userId={id} userEmail={authUser.email ?? ""} currentStatus={subscription?.status} />
+          <UserActions
+            userId={id}
+            userEmail={authUser.email ?? ""}
+            currentStatus={subscription?.status}
+            expiresAt={subscription?.expires_at ?? null}
+          />
         </div>
       </div>
     </div>

@@ -1,17 +1,19 @@
 "use client";
 
 import { useState } from "react";
-import { KeyRound, CreditCard, Trash2, CheckCircle } from "lucide-react";
+import { KeyRound, CreditCard, Trash2, CheckCircle, Clock } from "lucide-react";
 
 interface Props {
   userId: string;
   userEmail: string;
   currentStatus?: string;
+  expiresAt?: string | null;
 }
 
-export function UserActions({ userId, userEmail, currentStatus }: Props) {
+export function UserActions({ userId, userEmail, currentStatus, expiresAt }: Props) {
   const [loading, setLoading] = useState<string | null>(null);
   const [message, setMessage] = useState<{ type: "success" | "error"; text: string } | null>(null);
+  const [extendDays, setExtendDays] = useState("7");
 
   async function call(action: string, body?: object) {
     setLoading(action);
@@ -35,7 +37,7 @@ export function UserActions({ userId, userEmail, currentStatus }: Props) {
   const statusOptions = ["active", "trialing", "past_due", "canceled"];
 
   return (
-    <div className="bg-white rounded-2xl border border-slate-100 shadow-sm p-6 space-y-4">
+    <div className="bg-white rounded-2xl border border-slate-100 shadow-sm p-6 space-y-5">
       <h2 className="font-semibold text-slate-900">Azioni</h2>
 
       {message && (
@@ -48,7 +50,7 @@ export function UserActions({ userId, userEmail, currentStatus }: Props) {
       )}
 
       {/* Reset password */}
-      <div className="border-b border-slate-100 pb-4">
+      <div className="border-b border-slate-100 pb-5">
         <p className="text-xs text-slate-500 mb-2 font-medium uppercase tracking-wide">Password</p>
         <button
           onClick={() => call("reset_password")}
@@ -61,9 +63,36 @@ export function UserActions({ userId, userEmail, currentStatus }: Props) {
         <p className="text-xs text-slate-400 mt-1">Invia email con link di reset</p>
       </div>
 
-      {/* Subscription */}
-      <div className="border-b border-slate-100 pb-4">
-        <p className="text-xs text-slate-500 mb-2 font-medium uppercase tracking-wide">Abbonamento</p>
+      {/* Estendi trial */}
+      {(currentStatus === "trialing" || currentStatus === "past_due") && (
+        <div className="border-b border-slate-100 pb-5">
+          <p className="text-xs text-slate-500 mb-2 font-medium uppercase tracking-wide">Estendi trial</p>
+          <div className="flex gap-2">
+            <select
+              value={extendDays}
+              onChange={(e) => setExtendDays(e.target.value)}
+              className="flex-1 px-3 py-2 rounded-xl border border-slate-200 text-sm bg-white focus:outline-none focus:ring-2 focus:ring-emerald-500/30"
+            >
+              <option value="3">+3 giorni</option>
+              <option value="7">+7 giorni</option>
+              <option value="14">+14 giorni</option>
+              <option value="30">+30 giorni</option>
+            </select>
+            <button
+              onClick={() => call("extend_trial", { days: parseInt(extendDays), currentExpiresAt: expiresAt })}
+              disabled={!!loading}
+              className="flex items-center gap-2 px-4 py-2.5 rounded-xl bg-orange-100 text-orange-700 text-sm font-medium hover:bg-orange-200 transition-colors disabled:opacity-50"
+            >
+              <Clock className="w-4 h-4" />
+              {loading === "extend_trial" ? "..." : "Estendi"}
+            </button>
+          </div>
+        </div>
+      )}
+
+      {/* Stato abbonamento */}
+      <div className="border-b border-slate-100 pb-5">
+        <p className="text-xs text-slate-500 mb-2 font-medium uppercase tracking-wide">Cambia stato</p>
         <div className="space-y-2">
           {statusOptions.map((status) => (
             <button
@@ -86,7 +115,7 @@ export function UserActions({ userId, userEmail, currentStatus }: Props) {
 
       {/* Delete */}
       <div>
-        <p className="text-xs text-slate-500 mb-2 font-medium uppercase tracking-wide">Pericolo</p>
+        <p className="text-xs text-slate-500 mb-2 font-medium uppercase tracking-wide">Zona pericolo</p>
         <button
           onClick={() => {
             if (!confirm(`Eliminare definitivamente ${userEmail}? Questa azione è irreversibile.`)) return;
@@ -98,7 +127,6 @@ export function UserActions({ userId, userEmail, currentStatus }: Props) {
           <Trash2 className="w-4 h-4" />
           {loading === "delete_user" ? "Eliminazione..." : "Elimina account"}
         </button>
-        <p className="text-xs text-slate-400 mt-1">Elimina utente e tutti i suoi dati</p>
       </div>
     </div>
   );
