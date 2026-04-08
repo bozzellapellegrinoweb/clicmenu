@@ -1,7 +1,8 @@
 import { createClient } from "@/lib/supabase/server";
-import { notFound } from "next/navigation";
+import { notFound, redirect } from "next/navigation";
 import type { Metadata } from "next";
 import { PublicMenuView } from "@/components/public-menu/public-menu-view";
+import { slugify } from "@/lib/slug";
 
 export async function generateMetadata({ params }: { params: Promise<{ slug: string }> }): Promise<Metadata> {
   const { slug } = await params;
@@ -48,6 +49,9 @@ export default async function PublicMenuPage({ params }: { params: Promise<{ slu
       </div>
     );
   }
+
+  // Redirect to first menu slug so URL shows /nome-menu
+  redirect(`/m/${slug}/${slugify(menus[0].name)}`);
 
   // Load categories and items for all published menus
   const menusWithData = await Promise.all(
