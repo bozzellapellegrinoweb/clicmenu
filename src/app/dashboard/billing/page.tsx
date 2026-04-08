@@ -48,6 +48,23 @@ export default function BillingPage() {
     loadSubscription();
   }, []);
 
+  useEffect(() => {
+    if (typeof window === "undefined") return;
+    const params = new URLSearchParams(window.location.search);
+    if (params.get("success") === "true") {
+      (window as any).dataLayer = (window as any).dataLayer || [];
+      (window as any).dataLayer.push({
+        event: "purchase",
+        ecommerce: {
+          transaction_id: `clicmenu_${Date.now()}`,
+          value: 37,
+          currency: "EUR",
+          items: [{ item_id: "pro_annual", item_name: "Piano Pro Annuale", price: 37, quantity: 1 }],
+        },
+      });
+    }
+  }, []);
+
   async function handleCheckout() {
     setCheckoutLoading(true);
     const res = await fetch("/api/stripe/checkout", { method: "POST" });
