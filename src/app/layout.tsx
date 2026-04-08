@@ -4,6 +4,7 @@ import Script from "next/script";
 import "./globals.css";
 import { ToastProvider } from "@/components/ui/toast";
 import { MetaPageTracker } from "@/components/meta-tracker";
+import { CookieBanner } from "@/components/cookie-banner";
 
 const META_PIXEL_ID = "1440770307277416";
 const GA_ID = "G-VTSNLWPQMD";
@@ -56,8 +57,24 @@ export default function RootLayout({
   return (
     <html lang="it" className={`${plusJakarta.variable} h-full`}>
       <head>
-        {/* Google Analytics */}
-        <Script src={`https://www.googletagmanager.com/gtag/js?id=${GA_ID}`} strategy="afterInteractive" />
+        {/* ── Consent Mode v2 — default DENIED, prima di qualsiasi tag ── */}
+        <Script id="consent-default" strategy="beforeInteractive">{`
+          window.dataLayer = window.dataLayer || [];
+          function gtag(){dataLayer.push(arguments);}
+          gtag('consent', 'default', {
+            'ad_storage':          'denied',
+            'ad_user_data':        'denied',
+            'ad_personalization':  'denied',
+            'analytics_storage':   'denied',
+            'wait_for_update':     500
+          });
+        `}</Script>
+
+        {/* ── Google Analytics (gtag.js) ── */}
+        <Script
+          src={`https://www.googletagmanager.com/gtag/js?id=${GA_ID}`}
+          strategy="afterInteractive"
+        />
         <Script id="google-analytics" strategy="afterInteractive">{`
           window.dataLayer = window.dataLayer || [];
           function gtag(){dataLayer.push(arguments);}
@@ -65,7 +82,7 @@ export default function RootLayout({
           gtag('config', '${GA_ID}');
         `}</Script>
 
-        {/* Meta Pixel — browser-side */}
+        {/* ── Meta Pixel ── */}
         <Script id="meta-pixel" strategy="afterInteractive">{`
           !function(f,b,e,v,n,t,s)
           {if(f.fbq)return;n=f.fbq=function(){n.callMethod?
@@ -90,6 +107,7 @@ export default function RootLayout({
         <ToastProvider>
           <MetaPageTracker />
           {children}
+          <CookieBanner />
         </ToastProvider>
       </body>
     </html>
